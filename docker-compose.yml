@@ -85,12 +85,20 @@ services:
   immich-proxy:
     container_name: immich_proxy
     image: ghcr.io/immich-app/immich-proxy:${IMMICH_VERSION:-release}
-    ports:
-      - 2283:8080
+    networks:
+      - proxy
+    environment:
+      VIRTUAL_HOST: "${VIRTUAL_HOST}"
+      VIRTUAL_PORT: 8080
     depends_on:
       - immich-server
       - immich-web
     restart: always
+
+networks:
+  proxy:
+    name: ${PROXY_NETWORK}
+    external: true
 
 volumes:
   pgdata:
