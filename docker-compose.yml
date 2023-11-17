@@ -59,6 +59,7 @@ services:
     restart: always
     networks:
       - internal
+      - proxy
 
   typesense:
     container_name: immich_typesense
@@ -94,17 +95,6 @@ services:
       POSTGRES_DB: ${DB_DATABASE_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    restart: always
-
-  immich-proxy:
-    container_name: immich_proxy
-    image: ghcr.io/immich-app/immich-proxy:${IMMICH_VERSION:-release}
-    networks:
-      - internal
-      - proxy
-    depends_on:
-      - immich-server
-      - immich-web
     restart: always
 
 networks:
