@@ -17,6 +17,8 @@ services:
       - database
       - typesense
     restart: always
+    networks:
+      - internal
 
   immich-microservices:
     container_name: immich_microservices
@@ -35,6 +37,8 @@ services:
       - database
       - typesense
     restart: always
+    networks:
+      - internal
 
   immich-machine-learning:
     container_name: immich_machine_learning
@@ -44,6 +48,8 @@ services:
     env_file:
       - stack.env
     restart: always
+    networks:
+      - internal
 
   immich-web:
     container_name: immich_web
@@ -51,6 +57,8 @@ services:
     env_file:
       - stack.env
     restart: always
+    networks:
+      - internal
 
   typesense:
     container_name: immich_typesense
@@ -63,15 +71,21 @@ services:
     volumes:
       - tsdata:/data
     restart: always
+    networks:
+      - internal
 
   redis:
     container_name: immich_redis
     image: redis:6.2-alpine@sha256:3995fe6ea6a619313e31046bd3c8643f9e70f8f2b294ff82659d409b47d06abb
     restart: always
+    networks:
+      - internal
 
   database:
     container_name: immich_postgres
     image: postgres:14-alpine@sha256:874f566dd512d79cf74f59754833e869ae76ece96716d153b0fa3e64aec88d92
+    networks:
+      - internal
     env_file:
       - stack.env
     environment:
@@ -86,16 +100,15 @@ services:
     container_name: immich_proxy
     image: ghcr.io/immich-app/immich-proxy:${IMMICH_VERSION:-release}
     networks:
+      - internal
       - proxy
-    environment:
-      VIRTUAL_HOST: "${VIRTUAL_HOST}"
-      VIRTUAL_PORT: 8080
     depends_on:
       - immich-server
       - immich-web
     restart: always
 
 networks:
+  internal:
   proxy:
     name: ${PROXY_NETWORK}
     external: true
